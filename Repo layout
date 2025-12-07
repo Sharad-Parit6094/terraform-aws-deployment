@@ -1,0 +1,24 @@
+cloudzenia-aws-hands-on/
+├─ microservice/
+│  ├─ app.js
+│  ├─ package.json
+│  └─ Dockerfile
+├─ .github/
+│  └─ workflows/
+│     └─ ci-cd.yml
+├─ terraform/
+│  ├─ modules/
+│  │  ├─ vpc/
+│  │  ├─ rds/
+│  │  ├─ secretsmanager/
+│  │  ├─ ecs/
+│  │  ├─ alb/
+│  │  ├─ ec2/
+│  │  └─ iam/
+│  └─ environments/
+│     └─ dev/
+│        ├─ providers.tf
+│        ├─ variables.tf
+│        ├─ terraform.tfvars
+│        └─ main.tf
+└─ README.md (use the README text I gave earlier)
