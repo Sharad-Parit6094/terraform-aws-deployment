@@ -1,0 +1,53 @@
+# .github/workflows/ci-cd.yml
+name: Build & Deploy Microservice to ECR & ECS
+
+on:
+  push:
+    paths:
+      - 'microservice/**'
+      - '.github/workflows/ci-cd.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          IMAGE_NAME=${{ secrets.ECR_REPOSITORY }}
+          docker build -t $IMAGE_NAME:latest ./microservice
+
+      - name: Tag and Push to ECR
+        run: |
+          ACCOUNT=${{ secrets.AWS_ACCOUNT_ID }}
+          REGION=${{ secrets.AWS_REGION }}
+          REPO=${{ secrets.ECR_REPOSITORY }}
+          docker tag $REPO:latest $ACCOUNT.dkr.ecr.$REGION.amazonaws.com/$REPO:latest
+          docker push $ACCOUNT.dkr.ecr.$REGION.amazonaws.com/$REPO:latest
+
+      - name: Update ECS service (force new deployment)
+        run: |
+          ACCOUNT=${{ secrets.AWS_ACCOUNT_ID }}
+          REGION=${{ secrets.AWS_REGION }}
+          REPO=${{ secrets.ECR_REPOSITORY }}
+          CLUSTER=${{ secrets.ECS_CLUSTER }}
+          SERVICE=${{ secrets.ECS_SERVICE }}
+          # This will create a new revision of the task definition using the existing definition, replacing the image
+          TASK_DEF=$(aws ecs describe-task-definition --task-definition $SERVICE --query taskDefinition --output json)
+          NEW_TASK_DEF=$(echo $TASK_DEF | jq --arg IMG "$ACCOUNT.dkr.ecr.$REGION.amazonaws.com/$REPO:latest" '.containerDefinitions[0].image=$IMG | del(.status,.taskDefinitionArn,.requiresAttributes,.compatibilities,.revision) ')
+          echo "$NEW_TASK_DEF" > new-task-def.json
+          aws ecs register-task-definition --cli-input-json file://new-task-def.json
+          aws ecs update-service --cluster $CLUSTER --service $SERVICE --force-new-deployment
