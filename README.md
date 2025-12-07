@@ -1,7 +1,7 @@
 # AWS ECS, ALB, RDS, EC2, NGINX, Secrets Manager, CI/CD using Terraform & GitHub Actions.
 The project provisions AWS infrastructure using Terraform, deploys WordPress + Microservice on ECS, configures RDS, and deploys EC2 Instances with NGINX + Docker, along with CI/CD using GitHub Actions.
 
-##🚀 Project Overview
+## Project Overview
 This project demonstrates:
 Infrastructure as Code using Terraform
 Container deployments on Amazon ECS
@@ -14,7 +14,7 @@ CloudWatch logs & metrics
 GitHub Actions for CI/CD pipeline
 Optional S3 static hosting with CloudFront
 
-##⚙️ Infrastructure Components
+## Infrastructure Components
 AWS Services Used-
 ECS (Fargate)
 EC2
@@ -30,7 +30,7 @@ CloudWatch Logs & Metrics
 ECR
 S3 + CloudFront (Optional)
 
-##🔐 Security
+## Security
 IAM roles with least privilege
 All workloads in private subnets
 HTTPS enabled using SSL certificates
