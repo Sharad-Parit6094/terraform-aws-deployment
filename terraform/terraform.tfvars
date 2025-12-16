@@ -1,7 +1,7 @@
 aws_region      = "us-east-1"
-aws_profile     = "default"               # change if you use named profile
-aws_account_id  = "123456789012"          # REPLACE with your account id
-domain_name     = "yourdomain.com"        # REPLACE with your domain or DDNS
-certificate_arn = ""                      # REPLACE with ACM certificate ARN (required for HTTPS)
+aws_profile     = "terraform"               
+aws_account_id  = "092850822585"          
+domain_name     = "example.com"       
+certificate_arn = ""arn:aws:acm:us-east-1:092850822585:certificate/3b47b42ac3f6f09922"                      
 microservice_image_uri = ""               # Optional initially; set after pushing to ECR
 ssh_key_name    = ""                      # Optional: name of key pair in your AWS account
